@@ -20,6 +20,7 @@ function render(source, config) {
   config.raml2HtmlVersion = pjson.version;
 
   return raml2obj.parse(source).then((ramlObj) => {
+
     ramlObj.config = config;
 
     if (config.processRamlObj) {
@@ -64,6 +65,15 @@ function getDefaultConfig(mainTemplate, templatesPath) {
       // Setup the Nunjucks environment with the markdown parser
       const env = nunjucks.configure(templatesPath, { autoescape: false });
       markdown.register(env, (md) => marked(md, { renderer }));
+
+      // Setup types filter
+      env.addFilter('typeProperties', function(str) {
+        for (let typeEl of ramlObj.types) {
+          if (typeEl.hasOwnProperty(str)) {
+            return typeEl[str].properties;
+          }
+        }
+      })
 
       // Parse securedBy and use scopes if they are defined
       ramlObj.renderSecuredBy = function (securedBy) {

@@ -13,6 +13,7 @@ program
   .option('-i, --input [input]', 'RAML input file')
   .option('-t, --template [template]', 'Filename of the custom Nunjucks template')
   .option('-o, --output [output]', 'HTML output file')
+  .option('-b, --object', 'Output only the JSON model')
   .parse(process.argv);
 
 let input = program.input;
@@ -27,16 +28,26 @@ if (!input) {
   input = program.args[0];
 }
 
+if (program.object) {
+  const raml2obj = require('raml2obj');
+  return raml2obj.parse(input).then((ramlObj) => {
+    console.log(JSON.stringify(ramlObj, null, 2));
+    process.exit(0)
+  });
+} else {
+
 // Start the rendering process
-raml2html.render(input, raml2html.getDefaultConfig(program.template)).then((result) => {
-  if (program.output) {
-    fs.writeFileSync(program.output, result);
-  } else {
-    // Simply output to console
-    process.stdout.write(result);
-    process.exit(0);
-  }
-}).catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+  raml2html.render(input, raml2html.getDefaultConfig(program.template)).then((result) => {
+    if (program.output) {
+      fs.writeFileSync(program.output, result);
+    } else {
+      // Simply output to console
+      process.stdout.write(result);
+      process.exit(0);
+    }
+  }).catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+
+}

@@ -142,25 +142,40 @@
                     {% if method.body %}
                       <h3>Body</h3>
                       {% for key, b in method.body %}
-                        <p><strong>Type: {{ key }}</strong></p>
-                        {% if b.formParameters %}
-                          <strong>Form Parameters</strong>
-                          <ul>
-                            {% for key, item in b.formParameters %}
-                              {% include "./item.nunjucks" %}
-                            {% endfor %}
-                          </ul>
-                        {% endif %}
+                          <p><strong>Content-Type: {{ key }}</strong></p>
+                          {% if b.type %}
+                            Types:
+                            <ul>
+                              {% for type in b.type %}
+                                <li>
+                                  <b>{{ type }}</b>
+                                  <ul>
+                                    {% for key, item in type|typeProperties %}
+                                      {% include "./item.nunjucks" %}
+                                    {% endfor %}
+                                  </ul>
+                                </li>
+                              {% endfor %}
+                            </ul>
+                          {% endif %}
+                          {% if b.formParameters %}
+                            <strong>Form Parameters</strong>
+                            <ul>
+                              {% for key, item in b.formParameters %}
+                                {% include "./item.nunjucks" %}
+                              {% endfor %}
+                            </ul>
+                          {% endif %}
 
-                        {% if b.schema %}
-                          <p><strong>Schema</strong>:</p>
-                          <pre><code>{{ b.schema | escape }}</code></pre>
-                        {% endif %}
+                          {% if b.schema %}
+                            <p><strong>Schema</strong>:</p>
+                            <pre><code>{{ b.schema | escape }}</code></pre>
+                          {% endif %}
 
-                        {% if b.example %}
-                          <p><strong>Example</strong>:</p>
-                          <pre><code>{{ b.structuredExample.value | escape }}</code></pre>
-                        {% endif %}
+                          {% if b.example %}
+                            <p><strong>Example</strong>:</p>
+                            <pre><code>{{ b.structuredExample.value | escape }}</code></pre>
+                          {% endif %}
                       {% endfor %}
                     {% endif %}
                   </div>
